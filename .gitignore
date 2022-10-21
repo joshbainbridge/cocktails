@@ -1,0 +1,18 @@
+# Temporary
+.netrwhist
+
+# Exclude macOS files
+.DS_Store
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints
+
+# Python cache
+__pycache__
+
+# Portable pixmap file format
+*.ppm
+*.pfm
+
+# PNG file format
+*.png
