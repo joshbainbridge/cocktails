@@ -16,3 +16,6 @@ __pycache__
 
 # PNG file format
 *.png
+
+# Ignore 'venv' virtual environment
+venv/
