@@ -28,6 +28,7 @@ def run_text_generator(args):
     pipe = StableDiffusionPipeline.from_pretrained(model_path)
     pipe = pipe.to(device_name)
     pipe = disable_checker(pipe)
+    pipe.enable_attention_slicing()
 
     generator = build_generator(args)
 
@@ -35,7 +36,6 @@ def run_text_generator(args):
                   num_images_per_prompt=args.images,
                   num_inference_steps=args.steps,
                   generator=generator,
-                  strength=args.strength,
                   guidance_scale=args.scale,
                   height=args.height,
                   width=args.width)
@@ -46,6 +46,7 @@ def run_text_image_generator(args):
     pipe = StableDiffusionImg2ImgPipeline.from_pretrained(model_path)
     pipe = pipe.to(device_name)
     pipe = disable_checker(pipe)
+    pipe.enable_attention_slicing()
 
     generator = build_generator(args)
 
@@ -94,14 +95,14 @@ def main():
     parser.add_argument("--width", type=int, default=512,
                         help='output image width')
 
-    parser.add_argument("--strength", type=float, default=0.75,
-                        help='strength value')
-
     parser.add_argument("--scale", type=float, default=7.5,
                         help='guidance scale value')
 
     parser.add_argument("--init", type=str, default='',
-                        help='initial guadiance image')
+                        help='initial guidance image')
+
+    parser.add_argument("--strength", type=float, default=0.75,
+                        help='strength of guidance image')
 
     args = parser.parse_args()
 
