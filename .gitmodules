@@ -1,3 +1,6 @@
-[submodule "stable-diffusion-v1-4"]
-	path = stable-diffusion-v1-4
-	url = https://huggingface.co/CompVis/stable-diffusion-v1-4
+[submodule "stable-diffusion-2-1"]
+	path = stable-diffusion-2-1
+	url = https://huggingface.co/stabilityai/stable-diffusion-2-1
+[submodule "stable-diffusion-x4-upscaler"]
+	path = stable-diffusion-x4-upscaler
+	url = https://huggingface.co/stabilityai/stable-diffusion-x4-upscaler

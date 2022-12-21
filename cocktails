@@ -1,12 +1,9 @@
 #!/usr/bin/env python
 
 from argparse import ArgumentParser, BooleanOptionalAction
-from diffusers import StableDiffusionPipeline, StableDiffusionImg2ImgPipeline
+from diffusers import StableDiffusionPipeline, StableDiffusionImg2ImgPipeline, StableDiffusionUpscalePipeline
 from torch import Generator
 from PIL import Image
-
-model_path = './stable-diffusion-v1-4'
-device_name = 'mps'
 
 def dummy_checker_callback(images, **kwargs):
     return images, False
@@ -25,6 +22,9 @@ def build_generator(args):
     return Generator().manual_seed(seed)
 
 def run_text_generator(args):
+    model_path = './stable-diffusion-2-1'
+    device_name = 'mps'
+
     pipe = StableDiffusionPipeline.from_pretrained(model_path)
     pipe = pipe.to(device_name)
     pipe = disable_checker(pipe)
@@ -43,6 +43,9 @@ def run_text_generator(args):
     return result.images
 
 def run_text_image_generator(args):
+    model_path = './stable-diffusion-2-1'
+    device_name = 'mps'
+
     pipe = StableDiffusionImg2ImgPipeline.from_pretrained(model_path)
     pipe = pipe.to(device_name)
     pipe = disable_checker(pipe)
@@ -62,6 +65,31 @@ def run_text_image_generator(args):
                   height=args.height,
                   width=args.width,
                   init_image=init_image)
+
+    return result.images
+
+def run_text_image_upscaler(args):
+    model_path = './stable-diffusion-x4-upscaler'
+    device_name = 'cpu'
+
+    # Currently requires cpu device due to pytorch issue. Please see:
+    # https://github.com/pytorch/pytorch/issues/84039
+
+    pipe = StableDiffusionUpscalePipeline.from_pretrained(model_path)
+    pipe = pipe.to(device_name)
+    pipe = disable_checker(pipe)
+    pipe.enable_attention_slicing()
+
+    generator = build_generator(args)
+
+    init_image = Image.open(args.init)
+
+    result = pipe(prompt=args.prompt,
+                  image=init_image,
+                  num_inference_steps=args.steps,
+                  guidance_scale=args.scale,
+                  num_images_per_prompt=args.images,
+                  generator=generator)
 
     return result.images
 
@@ -104,12 +132,18 @@ def main():
     parser.add_argument("--strength", type=float, default=0.75,
                         help='strength of guidance image')
 
+    parser.add_argument("--upscale", action=BooleanOptionalAction,
+                        help='4x upscale the init image')
+
     args = parser.parse_args()
 
     if args.init == '':
         save_images(run_text_generator(args))
     else:
-        save_images(run_text_image_generator(args))
+        if args.upscale:
+            save_images(run_text_image_upscaler(args))
+        else:
+            save_images(run_text_image_generator(args))
 
 if __name__ == "__main__":
     main()

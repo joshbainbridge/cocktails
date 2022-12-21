@@ -12,8 +12,8 @@ git clone --recursive git@github.com:joshbainbridge/cocktails.git;
 Once cloned, if the virtual environment does not exist:
 
 ```bash
-python -m venv venv; source venv/bin/activate;
-python -m pip install -r requirements.txt;
+python3 -m venv venv; source venv/bin/activate;
+python3 -m pip install -r requirements.txt;
 ```
 
 Else if the virtual environment already exists:
@@ -39,3 +39,14 @@ And to deactivate the environment:
 ```
 deactivate;
 ```
+
+Dependencies:
+
+torch
+torchvision
+torchaudio
+diffusers
+transformers
+accelerate
+scipy
+safetensors
